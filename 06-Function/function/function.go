@@ -13,7 +13,7 @@ import (
  * Se pueden definir múltiples valores de retorno.
  * Si una función no retorna ningún valor, no es necesario especificarlo.
  */
- 
+
 type Operation int // Definir un nuevo tipo llamado Operation basado en int
 
 const (
@@ -51,4 +51,45 @@ func Calc(op Operation, x, y float64) (float64, error) {
 	default:
 		return 0, errors.New("unknown operation")
 	}
+}
+
+// Split divide un entero en dos partes y las devuelve
+func Split(v int) (x, y int) {
+	x = v * 4 / 9
+	y = v - x
+	return // Los valores de retorno se pueden omitir en la sentencia return
+}
+
+func MSum(values ...float64) float64 {
+	var sum float64
+	for _, v := range values {
+		sum += v
+	}
+	return sum
+}
+
+func MOperation(op Operation, values ...float64) (float64, error) {
+	if len(values) == 0 {
+		return 0, errors.New("no values provided")
+	}
+
+	result := values[0] // Inicializar el resultado con el primer valor
+	
+	// Iterar sobre los valores restantes y aplicar la operación
+	for _, v := range values[1:] {
+		switch op {
+		case SUM:
+			result += v
+		case SUBTRACTION:
+			result -= v
+		case MULTIPLICATION:
+			result *= v
+		case DIVISION:
+			if v == 0 {
+				return 0, errors.New("division by zero")
+			}
+			result /= v
+		}
+	}
+	return result, nil
 }
