@@ -23,6 +23,11 @@ func main() {
 	fmt.Println(myVar)
 	incrementP(&myVar)
 	fmt.Println(myVar)
+
+	var mySlice []int
+	mySlice = append(mySlice, 3, 4, 2)
+	fmt.Printf("addrs: %p, values: %v\n", mySlice, mySlice)
+	fmt.Printf("addrs 1: %p, vaddrs 2: %p, addrs 3: %p\n", &mySlice[0], &mySlice[1], &mySlice[2])
 }
 
 func increment(val int) {
