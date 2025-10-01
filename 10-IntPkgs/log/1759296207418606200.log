@@ -1,0 +1,8 @@
+Success: 2025/09/30 22:23:27 main.go:48: Logging to a file...1
+Success: 2025/09/30 22:23:27 main.go:49: Logging to a file...2
+Success: 2025/09/30 22:23:27 main.go:50: Logging to a file...3
+Success: 2025/09/30 22:23:27 main.go:51: Logging to a file...4
+Error: 2025/09/30 22:23:27 main.go:54: Logging to a file...1
+Error: 2025/09/30 22:23:27 main.go:55: Logging to a file...2
+Error: 2025/09/30 22:23:27 main.go:56: Logging to a file...3
+Error: 2025/09/30 22:23:27 main.go:57: Logging to a file...4

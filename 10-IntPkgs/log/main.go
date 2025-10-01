@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 /*
@@ -34,13 +36,23 @@ func main() {
 
 	log.Print("Application running smoothly.") // Registra un mensaje de log con nivel de severidad "Info"
 
-	file, err1 := os.Create("app.log") // Crear o abrir un archivo para registrar los logs
-	if err1 != nil {
-		log.Fatal("Error creating log file:", err1) // Registra un mensaje de log y termina el programa
+	log.Print("Another info message.") // Registra otro mensaje de log con nivel de severidad "Info"
+	date := time.Now()
+
+	file, err := os.Create(fmt.Sprintf("%d.log", date.UnixNano())) // Crear o abrir un archivo para registrar los logs
+	if err != nil {
+		panic(err)
 	}
-	defer file.Close() // Asegurarse de cerrar el archivo al final
 
-	log.SetOutput(file) // Redirigir la salida de log al archivo
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile) // Establecer el formato de los mensajes de log
+	l := log.New(file, "Success: ", log.LstdFlags|log.Lshortfile) // Crear un nuevo logger con el archivo como destino y un prefijo personalizado
+	l.Println("Logging to a file...1")
+	l.Println("Logging to a file...2")
+	l.Println("Logging to a file...3")
+	l.Println("Logging to a file...4")
 
+	l.SetPrefix("Error: ") // Cambiar el prefijo del logger
+	l.Println("Logging to a file...1")
+	l.Println("Logging to a file...2")
+	l.Println("Logging to a file...3")
+	l.Println("Logging to a file...4")
 }
