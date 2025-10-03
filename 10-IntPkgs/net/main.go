@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Data struct {
@@ -17,7 +20,14 @@ type User struct {
 	Name    string `json:"name"`
 	Year    int    `json:"year"`
 	Color   string `json:"color"`
-	Pantone string `json:"pantone_value"`
+	Pantone time.Time `json:"pantone_value"`
+}
+
+type UserCreate struct {
+	ID string `json:"id"`
+	Name string `json:"name"`
+	Job  string `json:"job"`
+	CreatedAt string `json:"createdAt"`
 }
 
 const (
@@ -42,10 +52,8 @@ func main() {
 
 	fmt.Println("----- Obtener un usuario -----")
 	// Obtener un usuario específico
-	user, err := GetUser("2")
-	if err != nil {
-		log.Fatal(err)
-	}
+	user, _ := GetUser("2")
+
 	// Imprime los detalles del usuario obtenido
 	fmt.Printf("Usuario obtenido: %+v\n", user)
 	fmt.Printf("ID: %d\n", user.ID)
@@ -53,6 +61,19 @@ func main() {
 	fmt.Printf("Nombre completo: %s\n", user.Name)
 	fmt.Printf("Color: %s\n", user.Color)
 	fmt.Printf("Pantone: %s\n", user.Pantone)
+
+	fmt.Println("----- Crear un usuario -----")
+
+	// Crear un nuevo usuario
+	newUser, err := CreateUser("morpheus", "leader")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Nuevo usuario creado: %+v\n", newUser)
+	fmt.Printf("ID: %s\n", newUser.ID)
+	fmt.Printf("Nombre: %s\n", newUser.Name)
+	fmt.Printf("Trabajo: %s\n", newUser.Job)
+	fmt.Printf("Creado en: %s\n", newUser.CreatedAt)
 }
 
 /* Ejemplo básico de una solicitud GET */
@@ -113,3 +134,46 @@ func GetUser(userID string) (*User, error) {
 	return &dataResponse.User, nil
 }
 
+func Post(url string, data interface{}) ([]byte, error) {
+	b, err := json.Marshal(data) // Convierte los datos a JSON
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b)) // Crea una nueva solicitud POST
+	if err != nil {
+		return nil, err
+	}
+	
+	req.Header.Set("Content-Type", "application/json") // Establece el encabezado Content-Type
+
+	client := &http.Client{}
+	resp, err := client.Do(req) // Realiza la solicitud
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	responseBody, err := ioutil.ReadAll(resp.Body) // Lee el cuerpo de la respuesta
+	if err != nil {
+		return nil, err
+	}
+	
+	return responseBody, nil
+}
+
+func CreateUser(name, job string) (*UserCreate, error) {
+	user := &UserCreate{
+		Name:    name,
+		Job:     job,
+		CreatedAt: time.Now().Format(time.RFC3339),
+	}
+	req , err := Post(fmt.Sprintf("%s/users", baseURL), user)
+	if err != nil {
+		return nil, err
+	}
+	if  err := json.Unmarshal(req, &user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
